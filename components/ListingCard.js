@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "react-native";
 import { ScrollView } from "react-native";
@@ -9,8 +9,17 @@ import Liststatus from "./Liststatus.js";
 import UserAvatar from "react-native-user-avatar";
 import ImageView from "react-native-image-viewing";
 import Photoviewer from "./Photoviewer.js";
+import { TouchableWithoutFeedback } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const ListingCard = ({ detail, list, found }) => {
+const ListingCard = ({
+  open: imagePopup,
+  setOpen: setImagePopUp,
+  detail,
+  list,
+  found,
+}) => {
+  const navigation = useNavigation();
   console.log(list);
   const keyFinder = {
     name: "Name",
@@ -44,57 +53,69 @@ const ListingCard = ({ detail, list, found }) => {
     });
   }
   console.log(list, "juhanlist");
+
+  // handle image press
+  const handleImagePress = () => {
+    setImagePopUp(true);
+  };
   return (
-    <View style={styles.container}>
-      {/* {detail && <ImageView
+    <>
+      <View style={styles.container}>
+        {/* {detail && <ImageView
         images={[{uri:list?.photo}]}
         imageIndex={0}
         visible={visible}
         onRequestClose={() => setIsVisible(false)}
       />} */}
-      <Photoviewer />
-      <ScrollView
-        style={{ marginBottom: detail ? 168 : 0 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          {/* <Image
+        <ScrollView
+          style={{ marginBottom: detail ? 168 : 0 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            {/* <Image
             style={styles.image}
             source={require('../assets/download.jpg')}
           /> */}
-          <UserAvatar
-            size={50}
-            style={styles.image}
-            name={list?.user?.displayName || "User Name"}
-          />
+            <UserAvatar
+              size={50}
+              style={styles.image}
+              name={list?.user?.displayName || "User Name"}
+            />
 
-          <View style={styles.name}>
-            <AppText style={styles.title}>
-              {list?.user?.displayName || "User Name"}
-            </AppText>
-            <AppText style={styles.subtitle}>16 Min Ago</AppText>
+            <View style={styles.name}>
+              <AppText style={styles.title}>
+                {list?.user?.displayName || "User Name"}
+              </AppText>
+              <AppText style={styles.subtitle}>16 Min Ago</AppText>
+            </View>
           </View>
-        </View>
-        <View style={styles.caption}>
-          <AppText style={styles.captionText}>{list?.caption}</AppText>
-        </View>
-        <Image style={styles.postImage} source={{ uri: list?.photo }} />
-        <Liststatus found={list?.found} />
-        {detail && (
-          <View style={styles.listDetail}>
-            {fields.map((item, index) => {
-              if (item.key === "Phone") item.value = "+880" + item.value;
-              return (
-                <View style={styles.field} key={index}>
-                  <AppText style={styles.title}>{item?.key}</AppText>
-                  <AppText style={styles.description}>{item?.value}</AppText>
-                </View>
-              );
-            })}
+          <View style={styles.caption}>
+            <AppText style={styles.captionText}>{list?.caption}</AppText>
           </View>
-        )}
-      </ScrollView>
-    </View>
+          {detail ? (
+            <TouchableWithoutFeedback onPress={handleImagePress}>
+              <Image style={styles.postImage} source={{ uri: list?.photo }} />
+            </TouchableWithoutFeedback>
+          ) : (
+            <Image style={styles.postImage} source={{ uri: list?.photo }} />
+          )}
+          <Liststatus found={list?.found} />
+          {detail && (
+            <View style={styles.listDetail}>
+              {fields.map((item, index) => {
+                if (item.key === "Phone") item.value = "+880" + item.value;
+                return (
+                  <View style={styles.field} key={index}>
+                    <AppText style={styles.title}>{item?.key}</AppText>
+                    <AppText style={styles.description}>{item?.value}</AppText>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </>
   );
 };
 
