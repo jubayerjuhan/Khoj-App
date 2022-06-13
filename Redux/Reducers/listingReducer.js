@@ -34,3 +34,27 @@ export const addListing = (state = {}, actions) => {
       return state;
   }
 };
+
+export const searchReducer = (state = {}, actions) => {
+  switch (actions.type) {
+    case "SEARCH_PENDING":
+      return {
+        ...state,
+        loading: true,
+      };
+    case "SEARCH_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+      };
+    case "SEARCH_FAILED":
+      return {
+        ...state,
+        loading: false,
+        error: true,
+      };
+
+    default:
+      return state;
+  }
+};

@@ -35,7 +35,6 @@ const AddListing = ({ navigation }) => {
     (state) => state.addListing
   );
   const dispatch = useDispatch();
-  // const { setFieldValue } = useFormikContext();
   const [selectedListing, setSelectedListing] = useState(listingType[0].value);
   const [selectedImage, setSelectedImage] = useState("");
   // getImage
@@ -68,7 +67,10 @@ const AddListing = ({ navigation }) => {
   };
 
   // post the listing through api
-  const postListing = async (values) => {
+  const postListing = async (
+    values,
+    { setSubmitting, setErrors, setStatus, resetForm }
+  ) => {
     values.photo = selectedImage;
     values.documentType = docType;
     if (!values.photo) {
@@ -76,6 +78,8 @@ const AddListing = ({ navigation }) => {
     }
     // console.log(values.caption, 'values')
     dispatch(actions[selectedListing](values));
+    resetForm({});
+    setSelectedImage(null);
   };
 
   // handling success and error
@@ -108,7 +112,7 @@ const AddListing = ({ navigation }) => {
         <Formik
           validationSchema={validationSchemas[selectedListing]}
           initialValues={{ photo: selectedImage ? selectedImage : "" }}
-          onSubmit={(values) => postListing(values)}
+          onSubmit={postListing}
         >
           {({
             handleChange,
@@ -117,8 +121,9 @@ const AddListing = ({ navigation }) => {
             values,
             errors,
             setErrors,
+            setValues,
+            resetForm,
           }) => {
-            console.log(errors);
             return (
               <FlatList
                 ListHeaderComponent={() => (

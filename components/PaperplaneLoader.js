@@ -5,10 +5,10 @@ import paperplaneloader from "../assets/lottiefiles/paperplaneloading.json";
 import AppText from "./App/AppText.js";
 import { Dimensions } from "react-native";
 
-const PaperplaneLoader = () => {
+const PaperplaneLoader = ({ source }) => {
   return (
     <View style={styles.container}>
-      <LottieView source={paperplaneloader} autoPlay loop />
+      <LottieView source={source || paperplaneloader} autoPlay loop />
     </View>
   );
 };
