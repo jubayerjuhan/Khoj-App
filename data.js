@@ -109,7 +109,6 @@ export const validationSchemas = {
       .required("Field Is Required"),
   }),
   foundDocument: Yup.object().shape({
-    // photo: Yup.string().required("Field Is Required"),
     name: Yup.string().required("Field Is Required"),
     address: Yup.string().required("Field Is Required"),
     phone: Yup.string()

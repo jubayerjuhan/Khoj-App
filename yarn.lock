@@ -1908,6 +1908,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-google-signin/google-signin@^7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@react-native-google-signin/google-signin/-/google-signin-7.2.2.tgz#29e416d5c8484b52de3dc97f982f04b0083f27fe"
+  integrity sha512-FqSJAEYz+SNeIOyokFX3e7nbBgK0js/Hye0YNY+cV0Qf1NxKw1vRt2MQB3kfuVWFCb+OSovgQCl6W8dhYvsblw==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@react-native/assets/-/assets-1.0.0.tgz#c6f9bf63d274bafc8e970628de24986b30a55c8e"
@@ -3255,6 +3260,13 @@ expo-font@~10.0.4, expo-font@~10.0.5:
   integrity sha512-x9YwM0xLkDdSvFjeNbyuh33Q1Hk3uc2jbMuuAN5W2ZVcUZqG0M8GCX/KV/D/7rYqdXKbliQA5r44MyDwZe/XRw==
   dependencies:
     fontfaceobserver "^2.1.0"
+
+expo-google-sign-in@~10.1.0:
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/expo-google-sign-in/-/expo-google-sign-in-10.1.1.tgz#f0959ecca65f62abf5dbcb370de2a2effc118e88"
+  integrity sha512-BXbGP/QL6k7UoMW9mrfLOOfsRlp4SrRZ7v9TKBSfLSWE+/A4e4s2mavXANZZx5+OqO7TOdHSCWaZmyEgMnn4tQ==
+  dependencies:
+    invariant "^2.2.4"
 
 expo-image-picker@~12.0.1:
   version "12.0.2"
