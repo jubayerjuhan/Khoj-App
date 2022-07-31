@@ -1,42 +1,44 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import {
-  SafeAreaView,
-} from 'react-native-safe-area-context'
-import AppText from '../components/App/AppText.js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StatusBar } from 'expo-status-bar';
-import Screen from '../components/Screen.js';
-import AppTextField from '../components/AppTextField.js';
-import AppButton from '../components/AppButton.js';
-import { Image, Keyboard } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
-import { TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AppText from "../components/App/AppText.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StatusBar } from "expo-status-bar";
+import Screen from "../components/Screen.js";
+import AppTextField from "../components/AppTextField.js";
+import AppButton from "../components/AppButton.js";
+import { Image, Keyboard } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import { TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { firebaseConfig } from '../firebase-config.js';
-import { useEffect } from 'react';
-import { Formik } from 'formik';
-import { authField, userSchema } from '../data.js';
-import { FlatList } from 'react-native';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { firebaseConfig } from "../firebase-config.js";
+import { useEffect } from "react";
+import { Formik } from "formik";
+import { authField, userSchema } from "../data.js";
+import { FlatList } from "react-native";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { storeUserInfoToDB } from "../api/storeUser.js";
 // import { authFirebase } from '../firebase-config.js';
-
 
 const Signup = ({ navigation }) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    initializeApp(firebaseConfig)
-  }, [])
+    initializeApp(firebaseConfig);
+  }, []);
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+    Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
 
     // cleanup function
     return () => {
-      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
-      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+      Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+      Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
     };
   }, []);
 
@@ -46,36 +48,34 @@ const Signup = ({ navigation }) => {
 
   const auth = getAuth();
 
-
   // store user
   const storeUser = async (value) => {
     try {
-      await AsyncStorage.setItem('user', JSON.stringify(value));
+      await AsyncStorage.setItem("user", JSON.stringify(value));
     } catch (e) {
-      console.log(e, 'error')
+      console.log(e, "error");
       // saving error
     }
-  }
+  };
 
   // handle sign up
   const handleSignup = (values) => {
     createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         const user = userCredential.user;
+        storeUserInfoToDB({ name: values.name, email: values.email });
         storeUser(user);
-        dispatch({ type: 'SET_USER', payload: user });
-
+        dispatch({ type: "SET_USER", payload: user });
         // creates user profile
         // updating user profile name
 
         updateProfile(auth.currentUser, {
           displayName: values.name, //user profile name
-        }).then((res) => {
-
-        }).catch((error) => {
-          console.log(error)
-
-        });
+        })
+          .then((res) => {})
+          .catch((error) => {
+            console.log(error);
+          });
         // ...
       })
       .catch((error) => {
@@ -84,28 +84,32 @@ const Signup = ({ navigation }) => {
         const errorMessage = error.message;
         // ..
       });
-  }
+  };
   return (
     <Screen style={styles.container}>
       <View style={styles.postDetail}>
-        <TouchableOpacity style={styles.chevron} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.chevron}
+          onPress={() => navigation.goBack()}
+        >
           <Entypo name="chevron-thin-left" size={24} color="white" />
         </TouchableOpacity>
         <AppText style={styles.text}>Sign Up</AppText>
       </View>
-      {!keyboardStatus ? <Image source={require('../assets/signup.png')} style={styles.image}></Image> : null}
+      {!keyboardStatus ? (
+        <Image
+          source={require("../assets/signup.png")}
+          style={styles.image}
+        ></Image>
+      ) : null}
       <View style={styles.loginForm}>
         <Formik
-          initialValues={{ email: '', password: '', name: '' }}
+          initialValues={{ email: "", password: "", name: "" }}
           validationSchema={userSchema.signup}
-          onSubmit={values => handleSignup(values)}
+          onSubmit={(values) => handleSignup(values)}
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
-            <KeyboardAvoidingView
-              behavior="padding"
-              enabled
-              style={{}}
-            >
+            <KeyboardAvoidingView behavior="padding" enabled style={{}}>
               <FlatList
                 style={{
                   marginBottom: 200,
@@ -123,7 +127,7 @@ const Signup = ({ navigation }) => {
                         onBlur={handleBlur(item.name)}
                         secureTextEntry={true}
                       />
-                    )
+                    );
                   } else {
                     return (
                       <AppTextField
@@ -134,7 +138,7 @@ const Signup = ({ navigation }) => {
                         onChangeText={handleChange(item.name)}
                         onBlur={handleBlur(item.name)}
                       />
-                    )
+                    );
                   }
                 }}
                 ListFooterComponent={() => (
@@ -170,48 +174,46 @@ const Signup = ({ navigation }) => {
             //   style={styles.input}
             // />
             // <AppButton onPress={handleSubmit} />
-
           )}
         </Formik>
-
       </View>
     </Screen>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   loginForm: {
     // marginTop: 100,
     paddingHorizontal: 20,
   },
   chevron: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
     top: 50,
     transform: [{ translateY: -15 }],
-    color: 'white',
+    color: "white",
     // top: 10,
   },
   postDetail: {
     height: 100,
-    backgroundColor: '#1977F3',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#1977F3",
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
-    alignSelf: 'center',
+    alignSelf: "center",
     width: 200,
     height: 300,
   },
   text: {
     fontWeight: "700",
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
     lineHeight: 19,
-  }
+  },
 });
 
 export default Signup;

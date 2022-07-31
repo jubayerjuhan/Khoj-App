@@ -6,14 +6,64 @@ import AppText from "../components/App/AppText.js";
 import Screen from "../components/Screen.js";
 import { globalStyle } from "./globalstyle.js";
 import UserAvatar from "react-native-user-avatar";
+import client from "../client.js";
+import { useState } from "react";
+import { TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import { changeDp } from "../api/storeUser.js";
 
 const Userscreen = ({ navigation }) => {
   const { user } = useSelector((state) => state.user);
+  const [addUserInfo, setAddUserInfo] = useState({});
+  useEffect(() => {
+    if (user) {
+      getAdditionalUserInfo(user.email);
+    }
+  }, []);
 
+  console.log(addUserInfo, "addUserInfo");
+
+  const getAdditionalUserInfo = async (email) => {
+    const { data } = await client.post("/me", { email });
+    setAddUserInfo(data?.user);
+  };
   const fields = [
-    { name: "User Name", value: user?.providerData[0]?.displayName },
-    { name: "Email", value: user?.providerData[0]?.email },
+    { name: "User Name", value: addUserInfo?.name },
+    { name: "Email", value: addUserInfo?.email },
+    { name: "Blood Group", value: addUserInfo?.blood },
+    { name: "Address", value: addUserInfo?.address },
+    { name: "Phone", value: addUserInfo?.phone },
   ];
+
+  const pickImage = async () => {
+    const imageResponse = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      // allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    const res = await FileSystem.readAsStringAsync(imageResponse.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    // setFieldValue("image", res);
+    const image = "data:image/png;base64," + res;
+    changeDp(image, addUserInfo?.email);
+  };
+
+  const handleImageEditPress = async () => {
+    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+    if (status === "granted") {
+      // open image browser
+      pickImage();
+    } else {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status === "granted") {
+        pickImage();
+      }
+    }
+  };
   return (
     <Screen>
       <View style={styles.topbar}>
@@ -25,11 +75,20 @@ const Userscreen = ({ navigation }) => {
             source={{ uri: "https://picsum.photos/400" }}
             style={styles.dp}
           /> */}
-          <UserAvatar
-            size={100}
-            style={styles.image}
-            name={user?.providerData[0]?.displayName}
-          />
+          <TouchableOpacity onPress={handleImageEditPress}>
+            {addUserInfo.profilePicture ? (
+              <Image
+                source={{ uri: addUserInfo?.profilePicture }}
+                style={styles.dp}
+              />
+            ) : (
+              <UserAvatar
+                size={100}
+                style={styles.image}
+                name={addUserInfo?.name}
+              />
+            )}
+          </TouchableOpacity>
         </View>
         <View style={styles.userInfoForm}>
           {fields.map((field, key) => (
@@ -50,6 +109,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: globalStyle.color.primary,
+  },
+  dp: {
+    width: 100,
+    height: 100,
   },
   title: {
     fontSize: 16,
