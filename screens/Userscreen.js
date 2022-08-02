@@ -12,8 +12,11 @@ import { TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { changeDp } from "../api/storeUser.js";
-
+import EditButton from "../components/Buttons/EditButton.js";
+import EditUserModal from "../components/Modals/EditUserModal.js";
+import moment from "moment";
 const Userscreen = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const { user } = useSelector((state) => state.user);
   const [addUserInfo, setAddUserInfo] = useState({});
   useEffect(() => {
@@ -26,6 +29,7 @@ const Userscreen = ({ navigation }) => {
 
   const getAdditionalUserInfo = async (email) => {
     const { data } = await client.post("/me", { email });
+    console.log(data, "datagot");
     setAddUserInfo(data?.user);
   };
   const fields = [
@@ -33,6 +37,11 @@ const Userscreen = ({ navigation }) => {
     { name: "Email", value: addUserInfo?.email },
     { name: "Blood Group", value: addUserInfo?.blood },
     { name: "Address", value: addUserInfo?.address },
+    {
+      name: "Date Of Birth",
+      fieldName: "dateOfBirth",
+      value: moment(addUserInfo?.dateOfBirth).format("DD-MM-YYYY"),
+    },
     { name: "Phone", value: addUserInfo?.phone },
   ];
 
@@ -64,6 +73,8 @@ const Userscreen = ({ navigation }) => {
       }
     }
   };
+
+  const handleEditButton = () => {};
   return (
     <Screen>
       <View style={styles.topbar}>
@@ -76,7 +87,7 @@ const Userscreen = ({ navigation }) => {
             style={styles.dp}
           /> */}
           <TouchableOpacity onPress={handleImageEditPress}>
-            {addUserInfo.profilePicture ? (
+            {addUserInfo?.profilePicture ? (
               <Image
                 source={{ uri: addUserInfo?.profilePicture }}
                 style={styles.dp}
@@ -99,6 +110,16 @@ const Userscreen = ({ navigation }) => {
           ))}
         </View>
       </View>
+      {/* edit button of user */}
+      <EditButton
+        onPress={() => setModalVisible(true)}
+        style={styles.editButton}
+      />
+      <EditUserModal
+        userInfo={addUserInfo}
+        visible={modalVisible}
+        setVisible={setModalVisible}
+      />
     </Screen>
   );
 };
@@ -109,6 +130,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: globalStyle.color.primary,
+  },
+  editButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 20,
   },
   dp: {
     width: 100,

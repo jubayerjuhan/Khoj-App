@@ -20,21 +20,23 @@ const SearchScreen = ({ route }) => {
   const [result, setResult] = useState([]);
   const { keyword, type, image } = route.params;
   console.log(keyword, type, image, "keyword");
-  console.log(result, "result");
   useEffect(() => {
     find(keyword);
   }, []);
+
+  useEffect(() => {
+    console.log(result.length, "resultii");
+  }, [result]);
 
   const find = async () => {
     setLoading(true);
     if (image) {
       const res = await search.faceId(image);
-      console.log(res, "resppps");
-      if (!res.ok) return setLoading(false);
-      if (res) {
-        setResult([res]);
-        setLoading(false);
-      }
+      console.log(res, "resuu");
+      if (res.ok === false) return setLoading(false);
+      console.log("hehe");
+      setResult([res?.foundPerson]);
+      setLoading(false);
     } else {
       const res = await search[type](keyword);
       if (!res.ok) return setLoading(false);

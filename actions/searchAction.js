@@ -25,8 +25,10 @@ const searchByFace = async (image) => {
       `https://recognize-missing-person.herokuapp.com/find/?url=${response.data?.photo}`
     );
     const searchResult = await client.get("foundPersons/" + faceId.data.found);
-    console.log(searchResult, "searchResult");
-    return searchResult.data.foundPerson;
+    if (searchResult?.data) {
+      console.log(searchResult.data, "searchResult");
+      return searchResult.data;
+    }
   } catch (error) {
     console.log(error, "error");
     if (error.response.status === 404) {

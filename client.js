@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const client = create({
   baseURL: "http://192.168.0.107:4000/api/v1",
-  // baseURL: 'https://khojapp.herokuapp.com/api/v1',
+  // baseURL: "https://khojapp.herokuapp.com/api/v1",
   timeout: 10000,
 });
 
