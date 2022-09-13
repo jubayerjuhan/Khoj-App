@@ -52,7 +52,6 @@ const ListingCard = ({
       value: list[key],
     });
   }
-  console.log(list, "juhanlist");
 
   // handle image press
   const handleImagePress = () => {
